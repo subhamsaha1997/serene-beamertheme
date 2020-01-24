@@ -6,3 +6,6 @@ The colors are chosen to give it an edgy look.
 
 
 Any positive feedback is welcomed.
+
+# Compiling .tex file
+Use XeLatex to compile instead of plain PDFLatex. Most of the GUI provides the option to switch.
