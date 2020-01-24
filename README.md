@@ -9,3 +9,4 @@ Any positive feedback is welcomed.
 
 # Compiling .tex file
 Use XeLatex to compile instead of plain PDFLatex. Most of the GUI provides the option to switch.
+Keep the .sty (style file) in the same folder when you compile the .tex file.
