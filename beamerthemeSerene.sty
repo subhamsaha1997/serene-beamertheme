@@ -1,0 +1,162 @@
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[none]{hyphenat}
+\usepackage{xltxtra}
+\usepackage[orientation=landscape,size=custom,width=16,height=9,scale=0.5,debug]{beamerposter}
+
+
+%Define colors
+\definecolor{SereneDBlue}{HTML}{011f4b}
+\definecolor{SereneBlue}{HTML}{03396c}
+\definecolor{SereneLBlue}{HTML}{005b96}
+\definecolor{SereneSGreen}{HTML}{6497b1}
+\definecolor{SereneWhite}{RGB}{255,255,243}
+\definecolor{SereneGrey}{RGB}{107,110,108}
+\definecolor{SereneBlue}{RGB}{22,190,207}
+\definecolor{SereneBlack}{RGB}{43,40,40}
+%define fonts
+\setmainfont{cochineal}
+
+
+% set colors
+\setbeamercolor{itemize item} {fg = SereneBlue}
+\setbeamercolor{enumerate item}{fg = SereneBlue}
+\setbeamercolor{alerted text}{fg = SereneLBlue}
+
+% change itemize bullets
+\setbeamertemplate{itemize item}{
+	\tikz{
+	\draw[fill = SereneDBlue, draw = none] (0,0) circle(0.15);
+	\draw[fill = SereneWhite, draw = none] (0,0) circle(0.1);
+	}
+}
+
+\setbeamertemplate{itemize subitem}{
+	\tikz{
+	\draw[fill = SereneDBlue, draw = none] (0,0) rectangle(0.075,0.075);
+	\draw[fill = SereneDBlue, draw = none] (0.075,0.075) rectangle(0.15,0.15);
+	\draw[fill = SereneDBlue, draw = none] (0,0.15) rectangle(0.075,0.225);
+	}
+}
+% remove non-functional navigation symbol
+\setbeamertemplate{navigation symbols} {}
+
+%remove default title page
+\setbeamertemplate{title page}{}
+% same thing with the frame titles
+\setbeamertemplate{frametitle}{}
+
+\newcounter{showProgressBar}
+\setcounter{showProgressBar}{1}
+\newcounter{showSlideNumbers}
+\setcounter{showSlideNumbers}{1}
+\newcounter{showSlideTotal}
+\setcounter{showSlideTotal}{1}
+
+\makeatletter
+\newcount\progressbar@tmpcounta
+\newcount\progressbar@tmpcountb
+\newdimen\progressbar@pbwidth
+\newdimen\progressbar@tmpdim
+
+\progressbar@pbwidth=16cm
+
+\setbeamertemplate{background}{
+    % deal with progress bar stuff
+    % (calculate where it should go)
+    \progressbar@tmpcounta=\insertframenumber
+    \progressbar@tmpcountb=\inserttotalframenumber
+    \progressbar@tmpdim=\progressbar@pbwidth
+    \multiply\progressbar@tmpdim by \progressbar@tmpcounta
+    \divide\progressbar@tmpdim by \progressbar@tmpcountb
+
+    \begin{tikzpicture}
+        % set up the entire slide as the canvas
+        \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+
+        % the background
+        \fill[color=SereneWhite] (0,0) rectangle(16cm,9cm);
+        % separate the drawing based on if we're the first (title) slide or not
+        \ifnum\thepage=1\relax
+            % the title page
+            % draw the fills
+            \fill[color=SereneDBlue] (0, 4cm) rectangle(16cm, 9cm);
+
+            % draw the actual text
+            \node[anchor=south,text width=15cm,inner xsep=0.5cm] at (8.1cm,4.5cm) {\color{SereneWhite}\Huge\textbf{\inserttitle}};
+            \node[anchor=south,text width=15cm,align=left, inner xsep = 0.5cm] at (8.1cm,3.4cm) {\color{SereneBlack}\small\insertsubtitle};
+            \node[above] at(8cm,2.25cm) {\color{SereneBlack}\tiny by};
+            \node at (8cm,2cm) {\color{SereneBlack}\LARGE\insertauthor};
+
+            % add the date in the corner
+            \node[anchor=south east] at(16cm,0cm) {\color{SereneGrey}\tiny\insertdate};
+        \else
+            % NOT the title page
+            % title bar
+            \fill[color=SereneDBlue] (0, 8cm) rectangle(16cm,9cm);
+
+            % swap the comment on these to add section titles to slide titles
+            \node[anchor=north,text width=11.8cm,inner xsep=0.5cm,inner ysep=0.25cm] at (6.4cm,9cm) {\color{SereneWhite}\Large\textbf{\insertframetitle}};
+        % if we're showing a progress bar, show it
+        	\ifnum \value{showProgressBar}>0\relax%
+                % the the progress bar icon in the middle of the screen
+                \draw[fill=SereneGrey,draw=none] (0cm,0cm) rectangle(16cm,0.15cm);
+                \draw[fill=SereneSGreen,draw=none] (0cm,0cm) rectangle(\progressbar@tmpdim,0.15cm);
+
+                % bottom information
+                \node[anchor=south west] at(0cm,0.25cm) {\color{SereneGrey}\tiny\insertsection};
+                % if slide numbers are active
+                \ifnum \value{showSlideNumbers}>0\relax%
+                    % if slide totals are active
+                    \ifnum \value{showSlideTotal}>0\relax%
+                        % draw both slide number and slide total
+                        \node[anchor=south east] at(16cm,0.25cm) {\color{SereneGrey}\tiny\insertframenumber/\inserttotalframenumber};
+                    \else
+                        % slide totals aren't active, don't draw them
+                        \node[anchor=south east] at(16cm,0.25cm) {\color{SereneGrey}\tiny\insertframenumber};
+                    \fi
+                \fi
+             % don't show the progress bar?
+            \else
+                % section title in the bottom left
+                \node[anchor=south west] at(0cm,0cm) {\color{SereneGrey}\tiny\insertsection};
+                % if we're showing slide numbers
+                \ifnum \value{showSlideNumbers}>0\relax%
+                    % if slide totals are active
+                    \ifnum \value{showSlideTotal}>0\relax%
+                        % draw both slide number and slide total
+                        \node[anchor=south east] at(16cm,0cm) {\color{SereneGrey}\tiny\insertframenumber/\inserttotalframenumber};
+                    \else
+                        % slide totals aren't active, don't draw them
+                        \node[anchor=south east] at(16cm,0cm) {\color{SereneGrey}\tiny\insertframenumber};
+                    \fi
+                \fi
+            \fi
+                \fi
+    \end{tikzpicture}
+}
+\makeatother
+
+% add section titles
+\AtBeginSection{\frame{\sectionpage}}
+\setbeamertemplate{section page}
+{
+    \begin{tikzpicture}
+        % set up the entire slide as the canvas
+        \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+        \fill[color=SereneWhite] (-1cm, 1cm) rectangle(16cm, 9cm);
+        \fill[color=SereneBlue] (-1cm, 4cm) rectangle(16cm, 6cm);
+        \node[text width=16cm,align=left] at (8cm, 5cm) {\color{SereneWhite}\Large\textbf{\insertsection}};
+    \end{tikzpicture}
+}
+
+\newcommand{\startProgressBar}{
+	\setcounter{framenumber}{0}
+	\setcounter{showProgressBar}{1}
+	\setcounter{showSlideNumbers}{1}
+}
+\newcommand{\noProgressBar}{
+    \setcounter{framenumber}{0}
+    \setcounter{showProgressBar}{0}
+    \setcounter{showSlideNumbers}{0}
+}
